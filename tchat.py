@@ -34,7 +34,7 @@ while True:
     content = input(">> ")
 
     result = chat_with_history.invoke(
-    {"input": content},
+        {"input": content},
         config={"configurable": {"session_id": "test_session"}}
     )
     print(result.content)
