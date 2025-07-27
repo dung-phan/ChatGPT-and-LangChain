@@ -6,6 +6,10 @@ from langchain_openai import OpenAI
 from langchain_openai import AzureOpenAIEmbeddings
 from langchain_community.vectorstores.chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
+from redundant_filter_retriever import RedundantFilterRetriever
+import langchain
+
+langchain.debug = True
 
 load_dotenv()
 
@@ -20,7 +24,10 @@ db = Chroma(
 ) # Initialize the Chroma vector store to query the database
 
 llm = OpenAI(model="gpt-4o-mini")
-retriever = db.as_retriever()
+retriever = RedundantFilterRetriever(
+    embeddings=embeddings,
+    db=db,
+)
 prompt = PromptTemplate.from_template(
     "Use the following context to answer the question:\n\n{context}\n\nQuestion: {question}"
 )
