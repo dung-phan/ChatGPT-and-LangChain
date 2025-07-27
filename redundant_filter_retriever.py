@@ -1,6 +1,4 @@
 from langchain_community.vectorstores.chroma import Chroma
-from langchain_core.callbacks import Callbacks
-from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 from langchain_core.retrievers import BaseRetriever
 
