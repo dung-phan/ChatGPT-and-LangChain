@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from dotenv import load_dotenv
+from langchain.memory import ConversationBufferMemory
 from langchain_core.prompts import PromptTemplate
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
@@ -11,6 +12,8 @@ load_dotenv()
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 template = """You are an agent that solves tasks using tools.
+Use the conversation history to resolve follow-ups:
+{chat_history}
 
 Use EXACTLY this loop format, one field per line:
 Question: {input}
@@ -46,7 +49,14 @@ tools = [calculator, current_time]
 
 prompt = PromptTemplate.from_template(template)
 agent = create_react_agent(llm, tools, prompt)
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=6)
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    verbose=True,
+    memory=memory,
+    max_iterations=6)
 
 print(agent_executor.invoke({"input": "What is 14*17, and also tell me the time in Amsterdam?"}))
+print(agent_executor.invoke({"input": "Multiply that result by 2."}))
